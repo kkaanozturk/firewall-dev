@@ -1,0 +1,57 @@
+# Path: izleme-stack/prometheus/alert_rules.yml
+# AegisNova Global - SOC Tier-1/2/3 ve NOC Otomatik Alarm Kuralları (PromQL)
+
+groups:
+  - name: aegisnova_ngfw_health_and_security
+    interval: 15s
+    rules:
+      - alert: NGFWDataPlaneCPUHigh
+        expr: aegisnova_ngfw_dataplane_cpu_percent > 85
+        for: 2m
+        labels:
+          severity: critical
+          team: noc-and-soc-tier2
+        annotations:
+          summary: "{{ $labels.branch }} ({{ $labels.model }}) DataPlane CPU %85 ustunde!"
+          description: "SSL Inspection veya DDoS kaynakli paket dusmesi riski. MTTA SLA < 5 dk."
+
+      - alert: CampusSessionTableExhaustionRisk
+        expr: (aegisnova_ngfw_active_sessions / aegisnova_ngfw_max_sessions) * 100 > 80
+        for: 3m
+        labels:
+          severity: critical
+          team: campus-noc-and-soc
+        annotations:
+          summary: "{{ $labels.branch }} eszamanli oturum tablosu %80 dolulugu asti!"
+          description: "10.000 ogrenci aginda CGNAT PBA havuzu veya SYN Flood kontrol edilmeli."
+
+      - alert: HighAvailabilityClusterOutOfSync
+        expr: aegisnova_ngfw_ha_sync_state == 0
+        for: 1m
+        labels:
+          severity: critical
+          team: noc
+        annotations:
+          summary: "{{ $labels.branch }} Active-Passive HA senkronizasyonu koptu!"
+          description: "Birincil cihaz arizasinda kesintisiz devretme (Stateful Failover) calismayabilir."
+
+      - alert: LateralMovementScanDetected
+        expr: increase(aegisnova_ngfw_denied_packets_total{reason=~"LATERAL_DENY|EXAM_VIOLATION|RND_ISOLATION"}[1m]) > 15
+        for: 0m
+        labels:
+          severity: high
+          team: soc-tier1
+        annotations:
+          summary: "{{ $labels.branch }} ic aginda yetkisiz yanal tarama veya sinav agi ihlali!"
+          description: "1 dakika icinde 15+ engellenen ic paket tespit edildi. SOC Playbook #PB-04 baslatin."
+
+      - alert: Law5651TimestampSignerFailure
+        expr: aegisnova_5651_last_sign_success_timestamp_seconds < (time() - 900)
+        for: 1m
+        labels:
+          severity: critical
+          team: secops-compliance
+        annotations:
+          summary: "{{ $labels.branch }} 5651 TUBITAK Zaman Damgasi servisi 15 dakikadir yanit vermiyor!"
+          description: "Yasal log imzalama surekliligi icin yerel tampon ve TSA baglantisini kontrol edin."
+

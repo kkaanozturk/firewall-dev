@@ -1,0 +1,14 @@
+# Path: .gitignore
+# Derlenmiş ikili dosyalar ve geçici çıktılar
+bin/
+*.exe
+*.out
+*.test
+coverage.txt
+
+# IDE ve işletim sistemi dosyaları
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
