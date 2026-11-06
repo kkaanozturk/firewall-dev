@@ -4,15 +4,18 @@
 
 ## 1. Senaryo: AegisNova Global Teknoloji ve Eğitim A.Ş.
 
-Kurgusal şirketimiz AegisNova Global; İstanbul genel merkezi, Ankara ve Londra ofisleri ve bir akademik kampüsten oluşur. Toplam **11.425 kullanıcının 10.000'i öğrencidir**. Amaç, her birime ihtiyacına göre bant genişliği vermek ve tüm şubeleri tek bir güvenlik politikasıyla korumaktır.
+Kurgusal şirketimiz AegisNova Global; İstanbul genel merkezi, Ankara ve Londra ofisleri ve bir akademik kampüsten oluşur. Toplam **11.600 kullanıcının 10.000'i öğrencidir**. Amaç, her birime ihtiyacına göre bant genişliği vermek ve tüm şubeleri tek bir güvenlik politikasıyla korumaktır.
 
-| Şube | İdari | Hoca | Öğrenci | Yazılım | Teknik | Güvenlik | AR-GE | Toplam | Gerekli (formül) | Ana + yedek hat | Seçilen NGFW (HA) |
-| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- |
-| [İstanbul](02-istanbul-ofisi/README.md) | 180 | 0 | 0 | 140 | 30 | 15 | 65 | **430** | 4,85 Gbps | 5 + 5 Gbps | Palo Alto PA-3430 |
-| [Ankara](01-ankara-ofisi/README.md) | 65 | 0 | 0 | 85 | 17 | 8 | 55 | **230** | 2,41 Gbps | 2,5 + 1 Gbps | Palo Alto PA-1420 + FortiGate 200F (iç) |
-| [Londra](03-londra-ofisi/README.md) | 45 | 0 | 0 | 50 | 10 | 5 | 25 | **135** | 1,67 Gbps | 2 + 2 Gbps | Palo Alto PA-1410 |
-| [Akademik Şube](04-akademik-sube/README.md) | 190 | 320 | 10.000 | 35 | 30 | 10 | 45 | **10.630** | 24,46 Gbps | 20 + 10 Gbps | FortiGate 1800F |
-| **Toplam** | **480** | **320** | **10.000** | **310** | **87** | **38** | **190** | **11.425** | **33,40 Gbps** | **29,5 + 18 Gbps** | |
+### 4. Headcount, bandwidth and firewall matrix per branch
+
+| Branch | Admin staff | Faculty | Students | Software | Technical | Security | R&D | Total | Required (formula) | Primary + backup link | Selected NGFW (HA) |
+| :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :--- |
+| [Istanbul Office](02-istanbul-ofisi/README.md) | 280 | 0 | 0 | 60 | 35 | 25 | 20 | **420** | 3.95 Gbps | 5 + 5 Gbps | **FortiGate 400F** |
+| [Ankara Office](01-ankara-ofisi/README.md) | 140 | 0 | 0 | 30 | 20 | 15 | 15 | **220** | 1.50 Gbps | 2 + 1 Gbps | **FortiGate 200F** |
+| [London Office](03-londra-ofisi/README.md) | 135 | 0 | 0 | 30 | 18 | 15 | 12 | **210** | 1.35 Gbps | 2 + 1 Gbps | **FortiGate 200F** |
+| [Academic Branch](04-akademik-sube/README.md) | 220 | 400 | 10,000 | 30 | 60 | 0 | 40 | **10,750** | 27.29 Gbps | 30 + 10 Gbps | **FortiGate 3500F** |
+| **Total** | **775** | **400** | **10,000** | **150** | **133** | **55** | **87** | **11,600** | **34.09 Gbps** | **39 + 17 Gbps** | |
+
 Varsayımlar: her şubenin kendi internet çıkışı vardır, şubeler şifreli VPN ile birbirine bağlıdır, merkezi sunucular (ERP, e-posta, SIEM) İstanbul'dadır.
 
 ## 2. Ağ Topolojisi ve VLAN / IP Planı
@@ -22,27 +25,26 @@ Mimari hub-and-spoke (yıldız) modelidir: İstanbul merkezdir, Ankara ve Londra
 ```mermaid
 flowchart LR
     NET((Internet))
-    subgraph IST["İstanbul HQ · 10.10.0.0/16 · 10 Gbps"]
-        ISTFW{{"PA-3430 HA"}}
-        ISTV["VLAN 10 Yönetim · 20 Personel · 30 Yazılım<br/>40 AR-GE · 50 Sunucu · 60 DMZ · 70 Ses/IoT · 90 Misafir"]
+    subgraph IST["İstanbul HQ · 10.10.0.0/16 · 10 Gbps (5+5)"]
+        ISTFW{{"FG-400F HA"}}
+        ISTV["VLAN 10 Yönetim · 20 İdari · 30 Yazılım<br/>40 AR-GE · 50 Sunucu · 60 DMZ · 70 Ses/IoT · 90 Misafir"]
         ISTFW --- ISTV
     end
-    subgraph ANK["Ankara · 10.20.0.0/16 · 3.5 Gbps"]
-        ANKFW{{"PA-1420 HA"}}
-        ISFW{{"FG-200F HA (iç ISFW)"}}
+    subgraph ANK["Ankara · 10.20.0.0/16 · 3 Gbps (2+1)"]
+        ANKFW{{"FG-200F HA"}}
         ANKV["VLAN 10 · 20 · 30 · 50 · 60 · 70 · 90"]
-        RND["VLAN 40 Savunma AR-GE (izole)"]
+        RND["VLAN 40 Savunma AR-GE"]
         ANKFW --- ANKV
-        ANKFW --- ISFW --- RND
+        ANKFW --- RND
     end
-    subgraph LON["Londra · 10.30.0.0/16 · 4 Gbps"]
-        LONFW{{"PA-1410 HA"}}
+    subgraph LON["Londra · 10.30.0.0/16 · 3 Gbps (2+1)"]
+        LONFW{{"FG-200F HA"}}
         LONV["VLAN 10 · 20 · 30 · 40 · 50 UK-GDPR · 60 · 70 · 90"]
         LONFW --- LONV
     end
-    subgraph AKA["Akademik · 10.40.0.0/16 + 10.100.0.0/16 · 30 Gbps"]
-        AKAFW{{"FG-1800F HA"}}
-        AKAV["VLAN 10 · 20 · 25 Hoca · 30 · 40 HPC · 50 · 55 Sınav<br/>60 DMZ · 80 Lab · 100 Öğrenci · 190 Misafir"]
+    subgraph AKA["Akademik · 10.40.0.0/16 + 10.100.0.0/16 · 40 Gbps (30+10)"]
+        AKAFW{{"FG-3500F HA"}}
+        AKAV["VLAN 10 · 20 · 25 Hoca · 30 · 40 AR-GE · 50 · 55 Sınav<br/>60 DMZ · 80 Lab · 100 Öğrenci · 190 Misafir"]
         AKAFW --- AKAV
     end
     NET --- ISTFW & ANKFW & LONFW & AKAFW
@@ -51,59 +53,59 @@ flowchart LR
     AKAFW <-. "IPsec (sadece log/yönetim)" .-> ISTFW
 ```
 
-### İstanbul – 10.10.0.0/16
+### İstanbul – 10.10.0.0/16 (Toplam 420 Kullanıcı)
 
 | VLAN | Alt ağ | Kullanım |
 | ---: | --- | --- |
-| 10 | 10.10.10.0/24 | Yönetim (firewall, switch, SOC) – 45 teknik |
-| 20 | 10.10.20.0/23 | İdari personel – 180 |
-| 30 | 10.10.30.0/23 | Yazılım ekibi – 140 |
-| 40 | 10.10.40.0/24 | AR-GE – 65 |
+| 10 | 10.10.10.0/24 | Yönetim (firewall, switch, SOC) – 35 teknik + 25 güvenlik |
+| 20 | 10.10.20.0/23 | İdari personel – 280 |
+| 30 | 10.10.30.0/24 | Yazılım ekibi – 60 |
+| 40 | 10.10.40.0/24 | AR-GE – 20 |
 | 50 | 10.10.50.0/24 | Veri merkezi (AD, ERP, GitLab, SIEM) |
 | 60 | 10.10.60.0/24 | DMZ (WAF, API, VPN) |
 | 70 | 10.10.70.0/23 | VoIP ve IoT |
 | 90 | 172.16.10.0/23 | Misafir ve stajyer |
 
-### Ankara – 10.20.0.0/16
+### Ankara – 10.20.0.0/16 (Toplam 220 Kullanıcı)
 
 | VLAN | Alt ağ | Kullanım |
 | ---: | --- | --- |
-| 10 | 10.20.10.0/24 | Yönetim – 25 teknik |
-| 20 | 10.20.20.0/24 | İdari ve proje personeli – 65 |
-| 30 | 10.20.30.0/24 | Yazılım ekibi – 85 |
-| 40 | 10.20.40.0/24 | Savunma AR-GE – 55 (FG-200F arkasında, internete kapalı) |
+| 10 | 10.20.10.0/24 | Yönetim – 20 teknik + 15 güvenlik |
+| 20 | 10.20.20.0/24 | İdari ve proje personeli – 140 |
+| 30 | 10.20.30.0/24 | Yazılım ekibi – 30 |
+| 40 | 10.20.40.0/24 | Savunma AR-GE – 15 (internete kapalı, özel erişim) |
 | 50 | 10.20.50.0/24 | Yerel sunucular (RODC, paket aynası, log) |
 | 60 | 10.20.60.0/24 | Kamu B2B VPN geçidi (DMZ) |
 | 70 | 10.20.70.0/24 | VoIP ve geçiş kontrol |
 | 90 | 172.16.20.0/24 | Misafir |
 
-### Londra – 10.30.0.0/16
+### Londra – 10.30.0.0/16 (Toplam 210 Kullanıcı)
 
 | VLAN | Alt ağ | Kullanım |
 | ---: | --- | --- |
-| 10 | 10.30.10.0/24 | Yönetim – 15 teknik |
-| 20 | 10.30.20.0/24 | İdari, satış, hukuk – 45 |
-| 30 | 10.30.30.0/24 | Bulut yazılım / SRE – 50 |
-| 40 | 10.30.40.0/24 | FinTech AR-GE – 25 |
+| 10 | 10.30.10.0/24 | Yönetim – 18 teknik + 15 güvenlik |
+| 20 | 10.30.20.0/24 | İdari, satış, hukuk – 135 |
+| 30 | 10.30.30.0/24 | Bulut yazılım / SRE – 30 |
+| 40 | 10.30.40.0/24 | FinTech AR-GE – 12 |
 | 50 | 10.30.50.0/24 | UK-GDPR veri sunucuları |
-| 60 | 10.30.60.0/24 | DMZ (GlobalProtect, API) |
+| 60 | 10.30.60.0/24 | DMZ (SSL-VPN, API) |
 | 70 | 10.30.70.0/24 | VoIP |
 | 90 | 172.16.30.0/24 | Misafir |
 
-### Akademik Şube – 10.40.0.0/16 ve 10.100.0.0/16
+### Akademik Şube – 10.40.0.0/16 ve 10.100.0.0/16 (Toplam 10.750 Kullanıcı)
 
 | VLAN | Alt ağ | Kullanım |
 | ---: | --- | --- |
-| 10 | 10.40.10.0/24 | Kampüs NOC – 40 teknik |
-| 20 | 10.40.20.0/23 | İdari personel – 190 |
-| 25 | 10.40.24.0/22 | Hocalar – 320 |
-| 30 | 10.40.30.0/24 | Kampüs yazılım – 35 |
-| 40 | 10.40.40.0/24 | Akademik AR-GE ve HPC – 45 |
+| 10 | 10.40.10.0/24 | Kampüs NOC – 60 teknik |
+| 20 | 10.40.20.0/23 | İdari personel – 220 |
+| 25 | 10.40.24.0/22 | Hocalar / Akademisyenler – 400 |
+| 30 | 10.40.30.0/24 | Kampüs yazılım – 30 |
+| 40 | 10.40.40.0/24 | Akademik AR-GE ve HPC – 40 |
 | 50 | 10.40.50.0/24 | Veri merkezi (OBS veritabanı, RADIUS, 5651 log) |
 | 55 | 10.40.52.0/22 | Dijital sınav salonları (internete kapalı) |
 | 60 | 10.40.60.0/24 | DMZ (LMS, OBS portalı, WAF) |
 | 80 | 10.40.80.0/21 | Bilgisayar laboratuvarları |
-| 100 | 10.100.0.0/16 | Öğrenci Wi-Fi (65.534 adres) |
+| 100 | 10.100.0.0/16 | Öğrenci Wi-Fi (10.000 öğrenci / 65.534 adres) |
 | 190 | 172.16.40.0/22 | Konferans ve misafir |
 
 Öğrenci ağı için /16 seçilmesinin nedeni: 10.000 öğrenci ortalama 1,8 cihaz taşır, pikte yaklaşık 11.700 cihaz aktiftir. Daha küçük bir blok bu sayıya yetmez.
@@ -127,40 +129,15 @@ N = kişi sayısı, C = eşzamanlılık oranı, M = kişi başı cihaz çarpanı
 | Hoca | %75 | 1,5 | 3,5 | 3,94 | Akademik veri tabanları, canlı ders |
 | Öğrenci | %65 | 1,8 | 1,7 | 1,99 | LMS, web, Wi-Fi |
 
-| Şube / Grup | Hesap | Sonuç |
-| --- | --- | ---: |
-| İstanbul – İdari | 180 × 1,95 | 351 Mbps |
-| İstanbul – Yazılım | 140 × 7,65 | 1.071 Mbps |
-| İstanbul – AR-GE | 65 × 10,88 | 707 Mbps |
-| İstanbul – Teknik/SOC | 45 × 6,00 | 270 Mbps |
-| İstanbul – Veri merkezi + DMZ + VPN hub | sabit tahmin | 850 Mbps |
-| İstanbul – Misafir | sabit tahmin | 80 Mbps |
-| **İstanbul toplam** | 3.329 × 1,12 × 1,30 = 4.847 Mbps | **2 × 5 Gbps = 10 Gbps** |
-| Ankara – İdari | 65 × 1,95 | 127 Mbps |
-| Ankara – Yazılım | 85 × 7,65 | 650 Mbps |
-| Ankara – Savunma AR-GE | 55 kişi, vekil/ayna üzerinden | 440 Mbps |
-| Ankara – Teknik | 25 × 6,00 | 150 Mbps |
-| Ankara – Kamu B2B VPN + HQ replikasyon | sabit tahmin | 250 Mbps |
-| Ankara – Misafir | sabit tahmin | 40 Mbps |
-| **Ankara toplam** | 1.657 × 1,12 × 1,30 = 2.413 Mbps | **2,5 Gbps ana + 1 Gbps yedek = 3,5 Gbps** |
-| Londra – İdari/Satış/Hukuk | 45 × 1,95 | 88 Mbps |
-| Londra – Bulut yazılım / SRE | 50 × 9,0 | 450 Mbps |
-| Londra – FinTech AR-GE | 25 × 10,88 | 272 Mbps |
-| Londra – Teknik | 15 × 6,00 | 90 Mbps |
-| Londra – API geçidi + HQ VPN | sabit tahmin | 220 Mbps |
-| Londra – Misafir | sabit tahmin | 30 Mbps |
-| **Londra toplam** | 1.150 × 1,12 × 1,30 = 1.674 Mbps | **2 × 2 Gbps = 4 Gbps** |
-| Akademik – Öğrenci | pikte 6.500 aktif öğrenci (~11.700 cihaz) | 13.000 Mbps |
-| Akademik – Hoca | 320 × 3,94 | 1.261 Mbps |
-| Akademik – İdari | 190 × 1,95 | 371 Mbps |
-| Akademik – Yazılım | 35 × 7,65 | 268 Mbps |
-| Akademik – AR-GE / HPC | 45 kişi | 900 Mbps |
-| Akademik – Teknik / NOC | 40 × 6,00 | 240 Mbps |
-| Akademik – DMZ (LMS, OBS) | sabit tahmin | 1.500 Mbps |
-| Akademik – Misafir / konferans | sabit tahmin | 250 Mbps |
-| **Akademik toplam** | 17.790 × 1,10 × 1,25 = 24.461 Mbps | **20 Gbps ULAKNET + 10 Gbps ISP = 30 Gbps** |
+| Şube / Grup | Hesap Detayı | Gerekli (Formül) | Tahsis Edilen Hat (Ana + Yedek) |
+| --- | --- | ---: | --- |
+| **İstanbul** (420 kişi) | İdari (280) + Yazılım (60) + Teknik/Güvenlik (60) + AR-GE (20) + DMZ/DC | **3,95 Gbps** | **5 + 5 Gbps = 10 Gbps** (FortiGate 400F HA) |
+| **Ankara** (220 kişi) | İdari (140) + Yazılım (30) + Teknik/Güvenlik (35) + AR-GE (15) + Kamu B2B | **1,50 Gbps** | **2 + 1 Gbps = 3 Gbps** (FortiGate 200F HA) |
+| **Londra** (210 kişi) | İdari (135) + Yazılım (30) + Teknik/Güvenlik (33) + AR-GE (12) + Bulut/API | **1,35 Gbps** | **2 + 1 Gbps = 3 Gbps** (FortiGate 200F HA) |
+| **Akademik Şube** (10.750 kişi) | Öğrenci (10.000) + Hoca (400) + İdari (220) + Teknik (60) + AR-GE (40) + Yazılım (30) | **27,29 Gbps** | **30 + 10 Gbps = 40 Gbps** (FortiGate 3500F HA) |
+| **Genel Toplam (11.600)** | Tüm şubeler ve kampüs toplam pik bant genişliği | **34,09 Gbps** | **39 + 17 Gbps = 56 Gbps** |
 
-Toplam kurulu kapasite 47,5 Gbps'tir. Her şubede en az iki hat vardır; tek hat koptuğunda bile pik yük taşınır (örneğin İstanbul'da tek 5 Gbps ≥ 4,85 Gbps).
+Her şubede aktif-yedek (veya aktif-aktif) hat yedekliliği mevcuttur; hatlardan biri kopsa dahi formülle hesaplanan gereken pik bant genişliği (Required formula) kesintisiz taşınır (örneğin İstanbul'da tek 5 Gbps ≥ 3,95 Gbps).
 
 ### Bant genişliğini uygulamak (QoS / Traffic Shaping)
 
@@ -220,7 +197,7 @@ Her şubeye bir yeni nesil güvenlik duvarı (NGFW) kurulur ve dört şubede de 
 
 Kurallar yukarıdan aşağıya işlenir, ilk eşleşme geçerlidir; her tablonun son satırı "hepsini reddet" kuralıdır. Tam kural setleri ve cihaz komutları: [İstanbul](02-istanbul-ofisi/firewall-kurallari.md), [Ankara](01-ankara-ofisi/firewall-kurallari.md), [Londra](03-londra-ofisi/firewall-kurallari.md), [Akademik](04-akademik-sube/firewall-kurallari.md).
 
-### İstanbul (PA-3430)
+### İstanbul (FortiGate 400F)
 
 | # | Kaynak | Hedef | Servis | İşlem | Not |
 | ---: | --- | --- | --- | --- | --- |
@@ -238,7 +215,7 @@ Kurallar yukarıdan aşağıya işlenir, ilk eşleşme geçerlidir; her tablonun
 | 12 | Misafir VLAN 90 | İç ağlar | Hepsi | Reddet | Yalnızca internet |
 | 99 | Her yer | Her yer | Hepsi | Reddet + Logla | Varsayılan |
 
-### Ankara (PA-1420 dış sınır + FG-200F iç ISFW)
+### Ankara (FortiGate 200F)
 
 | # | Kaynak | Hedef | Servis | İşlem | Not |
 | ---: | --- | --- | --- | --- | --- |
@@ -246,14 +223,14 @@ Kurallar yukarıdan aşağıya işlenir, ilk eşleşme geçerlidir; her tablonun
 | 2 | Kamu kurumları (beyaz liste) | DMZ B2B | IPsec, mTLS 8443 | İzin | |
 | 3 | Yönetim, İstanbul SOC | Yerel sunucular | SSH, SNMPv3, syslog | İzin | |
 | 4 | Yazılım VLAN 30 | İstanbul GitLab (VPN) | Git, SSH, HTTPS | İzin | |
-| 5 | Savunma AR-GE VLAN 40 | Yerel RODC, DNS, NTP | LDAPS, Kerberos, DNS | İzin | ISFW |
+| 5 | Savunma AR-GE VLAN 40 | Yerel RODC, DNS, NTP | LDAPS, Kerberos, DNS | İzin | Özel VLAN erişimi |
 | 6 | Savunma AR-GE VLAN 40 | İmzalı paket aynası | HTTPS 443 | İzin | Yükleme engelli (DLP) |
 | 7 | Bastion (yönetim) | Savunma AR-GE | SSH (kayıtlı oturum) | İzin | 2FA |
 | 8 | Diğer tüm VLAN'lar | Savunma AR-GE | Hepsi | Reddet | |
 | 9 | Savunma AR-GE | İnternet ve her yer | Hepsi | Reddet + Logla | Hava boşluğuna yakın |
 | 99 | Her yer | Her yer | Hepsi | Reddet + Logla | Varsayılan |
 
-### Londra (PA-1410)
+### Londra (FortiGate 200F)
 
 | # | Kaynak | Hedef | Servis | İşlem | Not |
 | ---: | --- | --- | --- | --- | --- |
@@ -265,11 +242,11 @@ Kurallar yukarıdan aşağıya işlenir, ilk eşleşme geçerlidir; her tablonun
 | 6 | AR-GE VLAN 40 | Onaylı sandbox adresleri | HTTPS | İzin | DLP: finansal kişisel veri |
 | 7 | AR-GE VLAN 40 | İnternet (diğer) | Hepsi | Reddet | |
 | 8 | Personel VLAN 20 | İnternet | Office 365, CRM, web | İzin | Kişisel bulut yükleme engelli |
-| 9 | Uzaktan çalışanlar | DMZ GlobalProtect | HTTPS | İzin | MFA, cihaz sağlığı kontrolü |
+| 9 | Uzaktan çalışanlar | DMZ SSL-VPN | HTTPS | İzin | MFA, cihaz sağlığı kontrolü |
 | 10 | Misafir VLAN 90 | İnternet | HTTP/HTTPS, DNS | İzin | 5 Mbps |
 | 99 | Her yer | Her yer | Hepsi | Reddet + Logla | Varsayılan |
 
-### Akademik Şube (FortiGate 1800F)
+### Akademik Şube (FortiGate 3500F)
 
 | # | Kaynak | Hedef | Servis | İşlem | Not |
 | ---: | --- | --- | --- | --- | --- |
@@ -297,78 +274,58 @@ Ankara ve Londra, İstanbul'a kalıcı IPsec tünelleriyle bağlanır; şubeler 
 | VPN-2 | İstanbul ↔ Londra | Aynı | İkinci ISP üzerinden ikinci tünel |
 | VPN-3 | İstanbul ↔ Akademik | Aynı (yalnızca log/yönetim) | İkinci ISP üzerinden ikinci tünel |
 
-## 8. Her Birim İçin En İyi 5 Güvenlik Duvarı
+## 8. Her Birim İçin En İyi 5 Güvenlik Duvarı ve Seçim
 
-Seçimde belirleyici olan hat hızı değil, **IPS + uygulama kontrolü + antivirüs + SSL inceleme açıkken** cihazın taşıyabildiği trafiktir (threat protection throughput). Bu açıldığında verim, katalogdaki "firewall throughput" değerinin çok altına düşer. Bu yüzden kural şudur:
+Seçimde belirleyici olan sadece port hızı değil, **IPS + uygulama kontrolü + antivirüs + SSL inceleme açıkken** cihazın taşıyabildiği trafiktir (threat protection throughput). Matriste belirtilen gereksinimlere (Required formula ve hat kapasitesi) göre her şube için en uygun 5 aday değerlendirilmiş ve seçimler matrisle birebir uyumlu olarak yapılmıştır:
 
-```latex
-Gerekli\ kapasite \ge Hat\ bant\ genişliği \times 1,2 \text{ ila } 1,5
-```
+| Birim | Formül Gereksinimi | Hat Kapasitesi (Ana+Yedek) | Seçilen NGFW (HA) | Neden Bu Model? |
+| --- | ---: | --- | --- | --- |
+| **İstanbul Ofisi** | 3,95 Gbps | 5 + 5 Gbps | **FortiGate 400F** | 9 Gbps Threat Protection, 10G SFP+ portları, 5+5 Gbps hattı tam yükte denetler |
+| **Ankara Ofisi** | 1,50 Gbps | 2 + 1 Gbps | **FortiGate 200F** | 3 Gbps Threat Protection, Kamu B2B tünelleri ve 3 Gbps toplam hattı karşılar |
+| **Londra Ofisi** | 1,35 Gbps | 2 + 1 Gbps | **FortiGate 200F** | 3 Gbps Threat Protection, UK-GDPR DLP ve IPsec VPN uyumluluğu |
+| **Akademik Şube** | 27,29 Gbps | 30 + 10 Gbps | **FortiGate 3500F** | 63 Gbps Threat Protection, 163 Gbps FW, 10.000 öğrenci için donanımsal CGNAT (NP7) |
 
-| Birim | Hat / trafik | Gerekli threat protection | Ek gereksinim |
-| --- | --- | ---: | --- |
-| Akademik Şube | 30 Gbps (pik 24,5) | ≥ 25 Gbps | 10.000 öğrenci, milyonlarca oturum, CGNAT, HA |
-| İstanbul | 10 Gbps (pik 4,85) | ≥ 7 Gbps | VPN hub, DMZ, SSL inceleme, HA |
-| Ankara dış sınır | 3,5 Gbps (pik 2,41) | ≥ 3,5 Gbps | Kamu B2B tünelleri, HA |
-| Ankara savunma AR-GE (iç) | 10 Gbps iç trafik | ≥ 3 Gbps | Farklı üretici, 10G SFP+ |
-| Londra | 4 Gbps (pik 1,67) | ≥ 3 Gbps | UK-GDPR DLP, bulut entegrasyonu |
-| Yazılım ekibi (bulut/konteyner) | 310 kişi | Sanal, ölçeklenebilir | Kubernetes, CI/CD, WAF |
+---
 
-Modeller yaklaşık sınıf göstergesidir; satın almadan önce üreticinin güncel veri sayfası doğrulanmalıdır.
+### 1. Akademik Şube (Gereksinim: 27,29 Gbps · Hat: 30 + 10 Gbps)
 
-### Akademik Şube
-
-| # | Model | Threat protection | SSL inceleme | Oturum | Karar |
+| # | Model | Threat Protection | Firewall Throughput | Oturum Sayısı | Karar |
 | ---: | --- | ---: | ---: | ---: | --- |
-| 1 | **Fortinet FortiGate 1800F (HA)** | 31 Gbps | ~20 Gbps | 12 milyon | **Seçildi** |
-| 2 | Palo Alto PA-5420 | 30,2 Gbps | ~19,5 Gbps | 5,7 milyon | Oturum kapasitesi yarı, maliyet yüksek |
-| 3 | Check Point Quantum 16200 | 24 Gbps | ~16 Gbps | 10 milyon | Pik yükte darboğaz |
-| 4 | Juniper SRX4600 | 22 Gbps | ~14,5 Gbps | 20 milyon | 30 Gbps hattın gerisinde |
-| 5 | Cisco Secure Firewall 4115 | 21,4 Gbps | ~12 Gbps | 15 milyon | SSL kapasitesi yetersiz |
+| 1 | **Fortinet FortiGate 3500F (HA)** | **63 Gbps** | **163 Gbps** | **120 Milyon** | **Seçildi (Matris Kararı):** NP7 işlemcili donanımsal CGNAT ve 40 Gbps hat için rakipsiz F/P |
+| 2 | Palo Alto PA-5430 | 41 Gbps | 80 Gbps | 10 Milyon | Oturum sayısı 10.000 öğrenci piki için sınırda, lisans maliyeti yüksek |
+| 3 | Check Point Quantum 16200 | 24 Gbps | 55 Gbps | 10 Milyon | 27,29 Gbps pik gereksinim altında kalır |
+| 4 | Cisco Secure Firewall 4125 | 32 Gbps | 75 Gbps | 25 Milyon | CGNAT port blok yönetimi karmaşık |
+| 5 | Juniper SRX4600 | 22 Gbps | 75 Gbps | 20 Milyon | Threat protection 27 Gbps gereksinimi karşılamaz |
 
-FortiGate 1800F'in NP7 işlemcisi, donanım hızlandırmalı CGNAT ve 12 milyon oturum sunar; 10.000 öğrencilik kampüste asıl risk NAT portu ve oturum tablosu tükenmesidir.
+### 2. İstanbul Ofisi (Gereksinim: 3,95 Gbps · Hat: 5 + 5 Gbps)
 
-### İstanbul
-
-| # | Model | Threat protection | SSL inceleme | Oturum | Karar |
+| # | Model | Threat Protection | SSL İnceleme | Oturum Sayısı | Karar |
 | ---: | --- | ---: | ---: | ---: | --- |
-| 1 | **Palo Alto PA-3430 (HA)** | 12,7 Gbps | ~8,5 Gbps | 3 milyon | **Seçildi** |
-| 2 | Fortinet FortiGate 600F | 10,5 Gbps | 9 Gbps | 8 milyon | Dış sınırda geçmiş SSL-VPN açıkları |
-| 3 | Check Point Quantum 6700 | 7,6 Gbps | ~5,8 Gbps | 4 milyon | 10 Gbps hat için dar |
-| 4 | Cisco Secure Firewall 3130 | 15,2 Gbps | ~6,4 Gbps | 4 milyon | Yönetim (FMC) yükü, günlük kural değişimi yavaş |
-| 5 | Sophos XGS 5500 | 14 Gbps | 13,5 Gbps | 18 milyon | Büyük ölçekli BGP/SOC entegrasyonu zayıf |
+| 1 | **Fortinet FortiGate 400F (HA)** | **9 Gbps** | **8 Gbps** | **8 Milyon** | **Seçildi (Matris Kararı):** 5+5 Gbps hattı ve SSL trafiğini darboğazsız karşılar |
+| 2 | Palo Alto PA-3430 | 12,7 Gbps | 8,5 Gbps | 3 Milyon | Yüksek maliyet, FortiGate şube ekosistemiyle uyumlu değil |
+| 3 | Check Point Quantum 6700 | 7,6 Gbps | 5,8 Gbps | 4 Milyon | 10 Gbps hat için büyüme marjı dar |
+| 4 | Cisco Secure Firewall 3120 | 9,5 Gbps | 4,2 Gbps | 3 Milyon | FMC yönetim lisansı ek maliyet |
+| 5 | Sophos XGS 4500 | 8 Gbps | 7,5 Gbps | 6 Milyon | Kurumsal BGP/IPsec tünel ölçeğinde sınırlı |
 
-PA-3430; App-ID, User-ID, WildFire ve Panorama ile İstanbul, Ankara ve Londra güvenlik duvarlarını tek yerden yönetmeyi sağlar.
+### 3. Ankara Ofisi (Gereksinim: 1,50 Gbps · Hat: 2 + 1 Gbps)
 
-### Ankara dış sınır
+| # | Model | Threat Protection | SSL İnceleme | Oturum Sayısı | Karar |
+| ---: | --- | ---: | ---: | ---: | --- |
+| 1 | **Fortinet FortiGate 200F (HA)** | **3 Gbps** | **4 Gbps** | **3 Milyon** | **Seçildi (Matris Kararı):** 2+1 Gbps hattı %100 kapsar, 1.50 Gbps pik yükü rahat taşır |
+| 2 | Palo Alto PA-1420 | 4,8 Gbps | 3,2 Gbps | 1 Milyon | Fiyat/performans açısından tek şube için pahalı |
+| 3 | Check Point Quantum 6200 | 2,5 Gbps | 1,8 Gbps | 2 Milyon | SSL altında 1.5 Gbps sınıra yakın |
+| 4 | Cisco Secure Firewall 1210 | 2,5 Gbps | 1,5 Gbps | 1 Milyon | Ayrı yönetim sunucusu gerekir |
+| 5 | WatchGuard Firebox M390 | 1,8 Gbps | 1,2 Gbps | 800 Bin | Kamu B2B tünellerinde performans düşüşü |
 
-| # | Model | Threat protection | SSL inceleme | Karar |
-| ---: | --- | ---: | ---: | --- |
-| 1 | **Palo Alto PA-1420 (HA)** | 4,8 Gbps | ~3,2 Gbps | **Seçildi** (Panorama uyumu) |
-| 2 | Fortinet FortiGate 400F | 9 Gbps | 8 Gbps | Panorama ortak şablonunu bozar |
-| 3 | Check Point Quantum 6400 | 3,9 Gbps | ~2,9 Gbps | SSL altında 3,5 Gbps hatta sınırda |
-| 4 | Cisco Secure Firewall 3110 | 8,9 Gbps | ~3,8 Gbps | Tek şube için ayrı FMC maliyeti |
-| 5 | WatchGuard Firebox M690 | 3,4 Gbps | 2,9 Gbps | Savunma B2B'de uygulama imzası yetersiz |
+### 4. Londra Ofisi (Gereksinim: 1,35 Gbps · Hat: 2 + 1 Gbps)
 
-### Ankara savunma AR-GE iç segmentasyon (ISFW)
-
-| # | Model | Threat protection | Karar |
-| ---: | --- | ---: | --- |
-| 1 | **Fortinet FortiGate 200F (HA)** | 3 Gbps | **Seçildi:** dışta Palo Alto, içte Fortinet; tek üretici zafiyetine karşı çift üretici |
-| 2 | Palo Alto PA-460 | 2,4 Gbps | Dış sınırla aynı üretici, 10G SFP+ yok |
-| 3 | Cisco Secure Firewall 1220CX | 4,5 Gbps | Ek yönetim konsolu yükü |
-| 4 | Check Point Quantum 3800 | 1,5 Gbps | Büyük imaj aktarımında darboğaz |
-| 5 | Netgate 8200 (pfSense Plus) | ~1,8 Gbps | Garantili yerinde yedek parça ve sertifikalı donanım yok |
-
-### Londra
-
-| # | Model | Threat protection | SSL inceleme | Karar |
-| ---: | --- | ---: | ---: | --- |
-| 1 | **Palo Alto PA-1410 (HA)** | 3,5 Gbps | ~2,5 Gbps | **Seçildi:** yerleşik DLP, UK-GDPR |
-| 2 | Fortinet FortiGate 200F | 3 Gbps | 4 Gbps | Panorama standardını bozar |
-| 3 | Juniper SRX1600 | 4,6 Gbps | ~3,1 Gbps | SaaS görünürlüğü ve DLP zayıf |
-| 4 | Cisco Secure Firewall 1220CX | 4,5 Gbps | ~2,2 Gbps | Düşük oturum tablosu, ayrı konsol |
-| 5 | Check Point Quantum 6200 | 2,5 Gbps | ~1,8 Gbps | SSL altında büyüme payı yok |
+| # | Model | Threat Protection | SSL İnceleme | Oturum Sayısı | Karar |
+| ---: | --- | ---: | ---: | ---: | --- |
+| 1 | **Fortinet FortiGate 200F (HA)** | **3 Gbps** | **4 Gbps** | **3 Milyon** | **Seçildi (Matris Kararı):** UK-GDPR DLP profilleri, SSL inceleme ve 1.35 Gbps pik için ideal |
+| 2 | Palo Alto PA-1410 | 3,5 Gbps | 2,5 Gbps | 1 Milyon | Lisanslama maliyeti yüksek |
+| 3 | Check Point Quantum 3800 | 1,5 Gbps | 1,0 Gbps | 1 Milyon | SSL inceleme açıldığında 1.35 Gbps'in altına düşer |
+| 4 | Juniper SRX1500 | 2,5 Gbps | 1,5 Gbps | 1,5 Milyon | DLP ve SaaS filtreleme yetenekleri zayıf |
+| 5 | Cisco Secure Firewall 1210 | 2,5 Gbps | 1,5 Gbps | 1 Milyon | Konsol parçalanması |
 
 ### Yazılım ekibi (bulut / konteyner katmanı)
 
@@ -475,12 +432,12 @@ Süreçler:
 
 ## 10. Sonuç
 
-AegisNova tasarımında her şubeye hesaplanan ihtiyacına göre hat verildi (toplam 47,5 Gbps), trafik QoS sınıflarıyla önceliklendirildi ve dört şube de "varsayılan reddet" ilkesiyle çalışan, HA çiftli NGFW'lerle korundu.
+AegisNova tasarımında her şubeye hesaplanan formül ihtiyacına göre hat tahsis edildi (toplam 34,09 Gbps pik ihtiyaç için 39 Gbps ana + 17 Gbps yedek = 56 Gbps kurulu hat), trafik QoS sınıflarıyla önceliklendirildi ve dört şube de "varsayılan reddet" ilkesiyle çalışan, HA çiftli FortiGate NGFW'lerle korundu.
 
 En kritik üç nokta:
 
-1. 10.000 öğrencilik akademik ağın diğer tüm ağlardan yalıtılması ve sınav trafiğinin her koşulda önceliklendirilmesi.
-2. Ankara savunma AR-GE bölgesinin farklı üreticili bir iç güvenlik duvarıyla internetten tamamen ayrılması.
+1. 10.000 öğrencilik akademik ağın diğer tüm ağlardan yalıtılması ve sınav trafiğinin her koşulda önceliklendirilmesi (FortiGate 3500F NP7 donanımsal CGNAT desteği).
+2. Şubeler arası IPsec tünelleri ve VPN yedekliliğiyle kesintisiz veri aktarımı ve merkezi izleme (FortiManager & FortiAnalyzer).
 3. Güvenlik duvarının tek başına yetmemesi: ağ için NGFW, web uygulamaları için WAF ve izleme için 7/24 SOC birlikte kullanılmalıdır (derinlemesine savunma).
 
 ## 11. Proje Dizini
@@ -490,10 +447,10 @@ firewallödev/
 ├── README.md                    # Proje raporu ve tüm mimari dokümantasyon
 │
 ├── 01-ankara-ofisi/
-│   ├── README.md                # Kişi sayıları, VLAN, bant genişliği, en iyi 5 güvenlik duvarı
+│   ├── README.md                # Kişi sayıları (220), VLAN, bant genişliği (1.5G), FG-200F
 │   ├── firewall-kurallari.md    # Şubenin kural seti
-│   └── configs/                 # Cihaz konfigürasyonları (pa1420, fg200f ISFW, nftables/tc)
-├── 02-istanbul-ofisi/           # (aynı yapı: pa3430)
-├── 03-londra-ofisi/             # (aynı yapı: pa1410)
-└── 04-akademik-sube/            # (aynı yapı: fg1800f)
+│   └── configs/                 # Cihaz konfigürasyonları
+├── 02-istanbul-ofisi/           # (aynı yapı: 420 kişi, 3.95G, FG-400F)
+├── 03-londra-ofisi/             # (aynı yapı: 210 kişi, 1.35G, FG-200F)
+└── 04-akademik-sube/            # (aynı yapı: 10.750 kişi, 27.29G, FG-3500F)
 ```
