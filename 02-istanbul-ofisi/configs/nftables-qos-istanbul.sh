@@ -1,6 +1,6 @@
-﻿#!/usr/bin/env bash
+#!/usr/bin/env bash
 # Path: 02-istanbul-ofisi/configs/nftables-qos-istanbul.sh
-# AegisNova Global - İstanbul Ofisi Linux Laboratuvar / Doğrulama Betiği (nftables + tc HTB 10 Gbps QoS)
+# Kalkan Bilişim - İstanbul Ofisi Linux Laboratuvar / Doğrulama Betiği (nftables + tc HTB 10 Gbps QoS)
 # Kullanım (Linux Lab VM / Simülasyon): sudo bash nftables-qos-istanbul.sh
 
 set -euo pipefail
@@ -30,7 +30,7 @@ echo "[2/3] İstanbul Ofisi Zero-Trust nftables kuralları yükleniyor..."
 nft -f - <<'EOF'
 flush ruleset
 
-table inet aegisnova_istanbul {
+table inet kalkan_istanbul {
     set threat_edl_ips {
         type ipv4_addr
         flags interval

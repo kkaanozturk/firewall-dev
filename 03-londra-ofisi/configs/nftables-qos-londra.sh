@@ -1,6 +1,6 @@
-﻿#!/usr/bin/env bash
+#!/usr/bin/env bash
 # Path: 03-londra-ofisi/configs/nftables-qos-londra.sh
-# AegisNova Global - Londra Ofisi Linux Laboratuvar / Doğrulama Betiği (nftables + tc HTB 4.0 Gbps & UK-GDPR Kilidi)
+# Kalkan Bilişim - Londra Ofisi Linux Laboratuvar / Doğrulama Betiği (nftables + tc HTB 4.0 Gbps & UK-GDPR Kilidi)
 
 set -euo pipefail
 
@@ -22,7 +22,7 @@ echo "[2/2] Londra Ofisi UK-GDPR Sınır Ötesi Veri Korumalı nftables kurallar
 nft -f - <<'EOF'
 flush ruleset
 
-table inet aegisnova_london {
+table inet kalkan_london {
     chain forward {
         type filter hook forward priority 0; policy drop;
 

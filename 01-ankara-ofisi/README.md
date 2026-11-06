@@ -1,7 +1,7 @@
 <!-- Path: 01-ankara-ofisi/README.md -->
 # Ankara Ofisi — Kamu Projeleri, Gömülü Yazılım ve Savunma AR-GE Merkezi
 
-Ankara yerleşkesi, **AegisNova Global**'in kamu kurumlarıyla yürüttüğü entegrasyon projelerini, yazılım ekiplerini ve en yüksek gizlilik seviyesine sahip **Savunma & Kriptografi AR-GE** birimini barındırır. Şubenin dış sınırında ve ağ omurgasında High Availability (Active-Passive) çalışan **Fortinet FortiGate 200F** güvenlik duvarı kümesi görev yapar.
+Ankara yerleşkesi, **Kalkan Bilişim**'in kamu kurumlarıyla yürüttüğü entegrasyon projelerini, yazılım ekiplerini ve en yüksek gizlilik seviyesine sahip **Savunma & Kriptografi AR-GE** birimini barındırır. Şubenin dış sınırında ve ağ omurgasında High Availability (Active-Passive) çalışan **Fortinet FortiGate 200F** güvenlik duvarı kümesi görev yapar.
 
 - **Kural Seti ve CLI Konfigürasyonu:** [firewall-kurallari.md](firewall-kurallari.md)
 - **Güvenlik Duvarı Konfigürasyonu (FortiGate 200F):** [configs/fg200f-rnd-isfw.conf](configs/fg200f-rnd-isfw.conf)

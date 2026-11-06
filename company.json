@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "slug": "aegisnova-global",
-  "name": "AegisNova Global Teknoloji ve Eğitim A.Ş.",
+  "slug": "kalkan-bilisim",
+  "name": "Kalkan Bilişim ve Eğitim Teknolojileri A.Ş.",
   "sector": "Technology / Higher Education",
   "author": {
     "name": "Mevlit Kaan Öztürk",
@@ -9,7 +9,7 @@
     "course": "BGT207",
     "github": "kkaanozturk"
   },
-  "summary": "AegisNova Global operates corporate offices in Istanbul (HQ, core data center and 24/7 SOC), Ankara (defense R&D and public-sector B2B), London (UK-GDPR data residency and FinTech), and a 10,000-student Academic Campus. High-availability Fortinet FortiGate NGFW clusters provide zero-trust zone segmentation, hardware-accelerated CGNAT (NP7) for student Wi-Fi, strict air-gapped isolation for defense research, role-based VPN with MFA, and unified SIEM/SOAR monitoring.",
+  "summary": "Kalkan Bilişim ve Eğitim Teknolojileri A.Ş.; İstanbul genel merkezi (yönetim, ana veri merkezi ve 7/24 SOC), Ankara ofisi (kamu projeleri ve savunma Ar-Ge), Londra ofisi (UK-GDPR ve FinTech) ile 10.000 öğrencili Akademik Şube kampüsünü kapsar. Yüksek erişilebilirlikli (HA) Fortinet FortiGate NGFW kümeleriyle sıfır güven bölge segmentasyonu, öğrenci ağı için donanımsal CGNAT (NP7), savunma araştırmaları için hava boşluğu seviyesinde izolasyon, MFA destekli rol tabanlı VPN ve merkezi SIEM/SOAR izleme mimarisi sunar.",
   "branches": [
     {
       "id": "istanbul-hq",
@@ -902,7 +902,7 @@
       "id": "CVE-2024-3400",
       "product": "Palo Alto PAN-OS GlobalProtect",
       "status": "not-affected",
-      "note": "İlgili açık PAN-OS telemetri ve GlobalProtect üzerindedir; AegisNova mimarisinde sınır cihazları Fortinet FortiGate mimarisindedir, kurum bu zafiyetten etkilenmemiştir."
+      "note": "İlgili açık PAN-OS telemetri ve GlobalProtect üzerindedir; Kalkan Bilişim mimarisinde sınır cihazları Fortinet FortiGate mimarisindedir, kurum bu zafiyetten etkilenmemiştir."
     },
     {
       "id": "CVE-2024-4577",

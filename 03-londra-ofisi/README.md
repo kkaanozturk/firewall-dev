@@ -1,7 +1,7 @@
 <!-- Path: 03-londra-ofisi/README.md -->
 # Londra Ofisi — UK & EMEA Uluslararası Operasyon, Bulut Yazılım ve FinTech AR-GE
 
-Londra yerleşkesi, **AegisNova Global**'in Birleşik Krallık ve Avrupa (EMEA) ticari merkezidir. Bulut-yerel (*Cloud-Native*) yazılım ekibini, FinTech/RegTech **AR-GE** birimini ve uluslararası hukuk/satış kadrosunu barındırır. Şube sınırında High Availability (Active-Passive) çalışan **Fortinet FortiGate 200F** güvenlik duvarı kümesi görev yapar ve **UK-GDPR (Data Protection Act 2018)** uyumlu DLP profilleriyle korunur.
+Londra yerleşkesi, **Kalkan Bilişim**'in Birleşik Krallık ve Avrupa (EMEA) ticari merkezidir. Bulut-yerel (*Cloud-Native*) yazılım ekibini, FinTech/RegTech **AR-GE** birimini ve uluslararası hukuk/satış kadrosunu barındırır. Şube sınırında High Availability (Active-Passive) çalışan **Fortinet FortiGate 200F** güvenlik duvarı kümesi görev yapar ve **UK-GDPR (Data Protection Act 2018)** uyumlu DLP profilleriyle korunur.
 
 - **Kural Seti ve CLI Konfigürasyonu:** [firewall-kurallari.md](firewall-kurallari.md)
 - **Linux nftables + 3.0 Gbps tc QoS Betiği:** [configs/nftables-qos-londra.sh](configs/nftables-qos-londra.sh)

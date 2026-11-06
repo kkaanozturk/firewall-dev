@@ -1,5 +1,5 @@
 <!-- Path: 04-akademik-sube/README.md -->
-# Akademik Şube — 10.000 Öğrencili AegisNova Teknoloji Kampüsü
+# Akademik Şube — 10.000 Öğrencili Kalkan Teknoloji Kampüsü
 
 Akademik Şube, **10.000 öğrenci**, **400 akademisyen (hoca)**, **220 idari personel**, **30 kişilik kampüs yazılım ekibi**, **40 kişilik akademik AR-GE ekibi** ve **60 kişilik kampüs teknik (NOC) ekibi** olmak üzere toplam **10.750 kişilik** dev bir üniversite/kampüs ekosistemidir.
 

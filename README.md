@@ -1,10 +1,10 @@
 # Vize Projesi – Kurumsal Ağ Tasarımı: Bant Genişliği ve Güvenlik Duvarları
 
-> Bu depo, AegisNova Global için bant genişliği hesabını, VLAN bölünmesini, şube bazlı en uygun güvenlik duvarlarını, kural setlerini ve izleme (monitoring) yapısını içerir. Şube bazlı tam kural setleri ve cihaz konfigürasyonları şube klasörlerindedir (`01-` … `04-`).
+> Bu depo, Kalkan Bilişim için bant genişliği hesabını, VLAN bölünmesini, şube bazlı en uygun güvenlik duvarlarını, kural setlerini ve izleme (monitoring) yapısını içerir. Şube bazlı tam kural setleri ve cihaz konfigürasyonları şube klasörlerindedir (`01-` … `04-`).
 
-## 1. Senaryo: AegisNova Global Teknoloji ve Eğitim A.Ş.
+## 1. Senaryo: Kalkan Bilişim ve Eğitim Teknolojileri A.Ş.
 
-Kurgusal şirketimiz AegisNova Global; İstanbul genel merkezi, Ankara ve Londra ofisleri ve bir akademik kampüsten oluşur. Toplam **11.600 kullanıcının 10.000'i öğrencidir**. Amaç, her birime ihtiyacına göre bant genişliği vermek ve tüm şubeleri tek bir güvenlik politikasıyla korumaktır.
+Kurgusal şirketimiz Kalkan Bilişim ve Eğitim Teknolojileri A.Ş.; İstanbul genel merkezi, Ankara ve Londra ofisleri ve bir akademik kampüsten oluşur. Toplam **11.600 kullanıcının 10.000'i öğrencidir**. Amaç, her birime ihtiyacına göre bant genişliği vermek ve tüm şubeleri tek bir güvenlik politikasıyla korumaktır.
 
 ### 4. Headcount, bandwidth and firewall matrix per branch
 
@@ -343,11 +343,11 @@ Seçimde belirleyici olan sadece port hızı değil, **IPS + uygulama kontrolü 
 2. Donanım hızlandırması yoktur; 30 Gbps'te IPS ve SSL inceleme açıldığında CPU darboğazı ve paket kaybı oluşur.
 3. Kimlik farkındalığı zayıftır: kural IP'ye değil "Yazılım Grubu" veya "Öğrenci Rolü"ne yazılmalıdır.
 4. WildFire/FortiGuard gibi küresel tehdit istihbaratı ve sıfır-gün korumasının açık kaynak karşılığı aynı hızda güncellenmez.
-5. 11.425 kişilik yapıda 4 saatte yerinde parça değişimi (RMA) ve ISO 27001 / KVKK / UK-GDPR denetiminin istediği sertifikalı donanım gerekir.
+5. 11.600 kişilik yapıda 4 saatte yerinde parça değişimi (RMA) ve ISO 27001 / KVKK / UK-GDPR denetiminin istediği sertifikalı donanım gerekir.
 
 ## 9. Monitoring: Sistem ve İnsan
 
-Profesyonel dünyada izleme iki merkezde yapılır: **NOC** ağın ayakta olup olmadığını, **SOC** saldırı olup olmadığını izler. AegisNova'da merkez SOC/NOC İstanbul'dadır; 7/24 üç vardiya çalışır ve diğer şubelerin yerel teknik ekipleriyle entegredir.
+Profesyonel dünyada izleme iki merkezde yapılır: **NOC** ağın ayakta olup olmadığını, **SOC** saldırı olup olmadığını izler. Kalkan Bilişim'de merkez SOC/NOC İstanbul'dadır; 7/24 üç vardiya çalışır ve diğer şubelerin yerel teknik ekipleriyle entegredir.
 
 ```mermaid
 flowchart LR
@@ -432,7 +432,7 @@ Süreçler:
 
 ## 10. Sonuç
 
-AegisNova tasarımında her şubeye hesaplanan formül ihtiyacına göre hat tahsis edildi (toplam 34,09 Gbps pik ihtiyaç için 39 Gbps ana + 17 Gbps yedek = 56 Gbps kurulu hat), trafik QoS sınıflarıyla önceliklendirildi ve dört şube de "varsayılan reddet" ilkesiyle çalışan, HA çiftli FortiGate NGFW'lerle korundu.
+Kalkan Bilişim tasarımında her şubeye hesaplanan formül ihtiyacına göre hat tahsis edildi (toplam 34,09 Gbps pik ihtiyaç için 39 Gbps ana + 17 Gbps yedek = 56 Gbps kurulu hat), trafik QoS sınıflarıyla önceliklendirildi ve dört şube de "varsayılan reddet" ilkesiyle çalışan, HA çiftli FortiGate NGFW'lerle korundu.
 
 En kritik üç nokta:
 
@@ -445,7 +445,6 @@ En kritik üç nokta:
 ```text
 firewallödev/
 ├── README.md                    # Proje raporu ve tüm mimari dokümantasyon
-├── company.json                 # BGT207 os-lab firewall manifestosu (şema doğrulamalı)
 │
 ├── 01-ankara-ofisi/
 │   ├── README.md                # Kişi sayıları (220), VLAN, bant genişliği (1.5G), FG-200F

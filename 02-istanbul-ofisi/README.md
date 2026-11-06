@@ -1,7 +1,7 @@
 <!-- Path: 02-istanbul-ofisi/README.md -->
 # İstanbul Ofisi — Genel Merkez (HQ), Ana Veri Merkezi ve Merkez SOC
 
-İstanbul yerleşkesi, **AegisNova Global**'in yönetim üssü, birincil veri merkezi (Core Data Center), kurumsal yazılım geliştirme kampüsü, yapay zeka **AR-GE** birimi ve tüm şubeleri 7/24 denetleyen **Merkez SOC / NOC** birimidir. Dış sınırda ve merkez omurgada High Availability (Active-Passive) çalışan **Fortinet FortiGate 400F** güvenlik duvarı kümesi görev yapar.
+İstanbul yerleşkesi, **Kalkan Bilişim**'in yönetim üssü, birincil veri merkezi (Core Data Center), kurumsal yazılım geliştirme kampüsü, yapay zeka **AR-GE** birimi ve tüm şubeleri 7/24 denetleyen **Merkez SOC / NOC** birimidir. Dış sınırda ve merkez omurgada High Availability (Active-Passive) çalışan **Fortinet FortiGate 400F** güvenlik duvarı kümesi görev yapar.
 
 - **Kural Seti ve CLI Konfigürasyonu:** [firewall-kurallari.md](firewall-kurallari.md)
 - **Linux nftables + 10 Gbps tc QoS Betiği:** [configs/nftables-qos-istanbul.sh](configs/nftables-qos-istanbul.sh)

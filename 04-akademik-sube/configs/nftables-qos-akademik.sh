@@ -1,6 +1,6 @@
-﻿#!/usr/bin/env bash
+#!/usr/bin/env bash
 # Path: 04-akademik-sube/configs/nftables-qos-akademik.sh
-# AegisNova Global - Akademik Şube (10.000 Öğrenci, 30 Gbps WAN) Linux Lab Betiği (nftables + tc HTB + Per-IP Conntrack)
+# Kalkan Bilişim - Akademik Şube (10.000 Öğrenci, 30 Gbps WAN) Linux Lab Betiği (nftables + tc HTB + Per-IP Conntrack)
 
 set -euo pipefail
 
@@ -24,7 +24,7 @@ echo "[2/2] 10.000 Öğrenci İzolasyonlu ve Sınav Salonu Kilitli nftables kura
 nft -f - <<'EOF'
 flush ruleset
 
-table inet aegisnova_campus {
+table inet kalkan_campus {
     chain forward {
         type filter hook forward priority 0; policy drop;
 

@@ -1,6 +1,6 @@
-﻿#!/usr/bin/env bash
+#!/usr/bin/env bash
 # Path: 01-ankara-ofisi/configs/nftables-qos-ankara.sh
-# AegisNova Global - Ankara Ofisi Linux Laboratuvar / Doğrulama Betiği (nftables + tc HTB 3.5 Gbps QoS)
+# Kalkan Bilişim - Ankara Ofisi Linux Laboratuvar / Doğrulama Betiği (nftables + tc HTB 3.5 Gbps QoS)
 
 set -euo pipefail
 
@@ -21,7 +21,7 @@ echo "[2/2] Ankara Ofisi Savunma AR-GE İzolasyonlu nftables kuralları yükleni
 nft -f - <<'EOF'
 flush ruleset
 
-table inet aegisnova_ankara {
+table inet kalkan_ankara {
     chain forward {
         type filter hook forward priority 0; policy drop;
 
