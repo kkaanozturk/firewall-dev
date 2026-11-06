@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+﻿#!/usr/bin/env bash
 # Path: subeler/akademik-sube/configs/nftables-qos-akademik.sh
 # AegisNova Global - Akademik Şube (10.000 Öğrenci, 30 Gbps WAN) Linux Lab Betiği (nftables + tc HTB + Per-IP Conntrack)
 
@@ -30,9 +30,9 @@ table inet aegisnova_campus {
 
         ct state vmap { established : accept, related : accept, invalid : drop }
 
-        # 1. Dijital Sınav Salonları (10.40.55.0/22): Yalnızca Yerel Sınav Sunucusu (10.40.60.50:443), İNTERNET KAPALI!
-        ip saddr 10.40.55.0/22 ip daddr 10.40.60.50 tcp dport 443 accept
-        ip saddr 10.40.55.0/22 log prefix "[AKA-EXAM-VIOLATION-DROP] " drop
+        # 1. Dijital Sınav Salonları (10.40.52.0/22): Yalnızca Yerel Sınav Sunucusu (10.40.60.50:443), İNTERNET KAPALI!
+        ip saddr 10.40.52.0/22 ip daddr 10.40.60.50 tcp dport 443 accept
+        ip saddr 10.40.52.0/22 log prefix "[AKA-EXAM-VIOLATION-DROP] " drop
 
         # 2. 10.000 Öğrenci (10.100.0.0/16) -> İdare, Hoca, İç OBS DB ve HQ VPN Kesin Yasak!
         ip saddr 10.100.0.0/16 ip daddr { 10.10.0.0/16, 10.40.10.0/24, 10.40.20.0/23, 10.40.24.0/22, 10.40.40.0/24, 10.40.50.0/24 } log prefix "[AKA-STUDENT-LATERAL-SCAN-ALERT] " drop

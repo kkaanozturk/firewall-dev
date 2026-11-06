@@ -1,4 +1,4 @@
-<!-- Path: subeler/akademik-sube/firewall-kurallari.md -->
+﻿<!-- Path: subeler/akademik-sube/firewall-kurallari.md -->
 # Akademik Şube (10.000 Öğrenci, 320 Hoca, Sınav Ağı ve Kampüs) Güvenlik Duvarı Kural Seti
 
 - **Hedef Cihaz:** `AKA-FW01 / FW02` — Fortinet FortiGate 1800F (FortiOS 7.4 LTS, Active-Passive HA, NP7 Hardware Offload)
@@ -17,7 +17,7 @@
 | **1** | `BLK-WAN-BOGON-DDOS` | `WAN_ULAKNET`, `WAN_ISP` | Any | Any | USOM Zararlı IP + Botnet + Spoof | DoS Sensor (NP7 SYN Proxy) | **DROP** | SIEM |
 | **2** | `ALLOW-NOC-MGMT-SIEM` | `CAMPUS_NOC` (`10.40.10.0/24`) | `AD\GRP_Campus_NOC` (2FA) | `CAMPUS_DC`, `DMZ_EDU`, `VPN_IST_SOC` | `SSH`, `HTTPS`, `SNMPv3`, `Syslog-TLS (6514)` | IPS-High | **ACCEPT** | SIEM |
 | **3** | `DENY-STUDENT-TO-CORP-VPN` | `STUDENT_WIFI`, `COMPUTER_LABS`, `CAMPUS_GUEST` | Any | `VPN_IST_SOC` (`10.10.0.0/16`), `CAMPUS_DC`, `ADMIN_STAFF`, `FACULTY_NET`, `RND_HPC` | **ALL (Tam Kampüs İç İzolasyonu)** | — | **DENY** | **SIEM (İç Tarama Alarmı)** |
-| **4** | `ALLOW-EXAM-ONLY-LMS` | `EXAM_ISOLATED` (`10.40.55.0/22`) | Sınav İstemci MAC/802.1X | `DMZ_EDU` (`10.40.60.50` Sınav Sunucusu) | `HTTPS (TCP 443)` | WAF-Protected, IPS | **ACCEPT** | SIEM + Sınav Denetim İzi |
+| **4** | `ALLOW-EXAM-ONLY-LMS` | `EXAM_ISOLATED` (`10.40.52.0/22`) | Sınav İstemci MAC/802.1X | `DMZ_EDU` (`10.40.60.50` Sınav Sunucusu) | `HTTPS (TCP 443)` | WAF-Protected, IPS | **ACCEPT** | SIEM + Sınav Denetim İzi |
 | **5** | `DENY-EXAM-ALL-OTHER` | `EXAM_ISOLATED` | Any | `ANY` (İnternet dahil her yer) | `ALL` | — | **DENY** | **SIEM Alarm** |
 | **6** | `ALLOW-STUDENT-TO-WAF-OBS` | `STUDENT_WIFI` (`10.100.0.0/16`), `COMPUTER_LABS` | `RADIUS\Role_Student` | `DMZ_EDU` (`10.40.60.10-20` FortiWeb WAF -> LMS/OBS) | `HTTPS (TCP 443)` | WAF OWASP Top-10, Rate-Limit | **ACCEPT** | SIEM |
 | **7** | `DENY-STUDENT-P2P-TOR-MINE` | `STUDENT_WIFI`, `COMPUTER_LABS` | Any | `WAN_ULAKNET`, `WAN_ISP` | `BitTorrent`, `P2P`, `Tor`, `Psiphon/Proxy`, `Crypto-Mining`, `SMB/NetBIOS` | App-Control Block, DNS-Botnet | **DENY** | 5651 + SIEM |

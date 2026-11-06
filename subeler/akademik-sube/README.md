@@ -1,4 +1,4 @@
-<!-- Path: subeler/akademik-sube/README.md -->
+﻿<!-- Path: subeler/akademik-sube/README.md -->
 # Akademik Şube — 10.000 Öğrencili AegisNova Teknoloji Kampüsü
 
 Akademik Şube, **10.000 öğrenci**, **320 akademisyen (hoca)**, **190 idari personel**, **35 kişilik kampüs yazılım ekibi**, **45 kişilik akademik AR-GE / HPC ekibi** ve **40 kişilik kampüs teknik (NOC) ekibi** olmak üzere toplam **10.630 kişilik** dev bir üniversite/kampüs ekosistemidir.
@@ -47,7 +47,7 @@ flowchart TB
     CORE_SW --> V30["VLAN 30 - SW_CAMPUS (10.40.30.0/24) - 35 Yazılım Ekibi"]
     CORE_SW --> V40["VLAN 40 - RND_HPC (10.40.40.0/24) - 45 AR-GE & HPC"]
     CORE_SW --> V50["VLAN 50 - CAMPUS_DC (10.40.50.0/24) - OBS DB, FreeRADIUS, 5651"]
-    CORE_SW --> V55["VLAN 55 - EXAM_ISOLATED (10.40.55.0/22) - Dijital Sınav Salonları"]
+    CORE_SW --> V55["VLAN 55 - EXAM_ISOLATED (10.40.52.0/22) - Dijital Sınav Salonları"]
     CORE_SW --> V60["VLAN 60 - DMZ_EDU (10.40.60.0/24) - FortiWeb WAF + LMS / OBS Portal"]
     CORE_SW --> V80["VLAN 80 - COMPUTER_LABS (10.40.80.0/21) - Öğrenci Bilgisayar Labları"]
     CORE_SW --> V100["VLAN 100 - STUDENT_WIFI (10.100.0.0/16) - 10.000 Öğrenci Eduroam Wi-Fi"]
@@ -70,7 +70,7 @@ flowchart TB
 | 30 | `SW_CAMPUS` | `10.40.30.0/24` | 35 Kampüs Yazılım Ekibi | 500 Mbps | 2.000 Mbps | 100 Mbps |
 | 40 | `RND_HPC` | `10.40.40.0/24` | 45 Akademik AR-GE & HPC | 2.000 Mbps | 8.000 Mbps | Sınırsız (ULAKNET Öncelikli) |
 | 50 | `CAMPUS_DC` | `10.40.50.0/24` | İç Veritabanı, RADIUS, 5651 | 1.000 Mbps | 4.000 Mbps | Sunucu Politikası |
-| 55 | `EXAM_ISOLATED`| `10.40.55.0/22` | Dijital Sınav Salonları | **0 Mbps WAN** *(İnternet Kapalı)* | Yalnızca İç LMS Sınav IP | Dış Çıkış Yasak |
+| 55 | `EXAM_ISOLATED`| `10.40.52.0/22` | Dijital Sınav Salonları | **0 Mbps WAN** *(İnternet Kapalı)* | Yalnızca İç LMS Sınav IP | Dış Çıkış Yasak |
 | 60 | `DMZ_EDU` | `10.40.60.0/24` | LMS, OBS ve Kampüs Web | 3.000 Mbps | 10.000 Mbps | WAF DDoS Korumalı |
 | 80 | `COMPUTER_LABS`| `10.40.80.0/21` | Sabit Öğrenci Labları | 1.500 Mbps | 4.000 Mbps | 30 Mbps DL / 15 Mbps UL |
 | 100 | `STUDENT_WIFI` | `10.100.0.0/16` | **10.000 Öğrenci Wi-Fi** *(65.534 IP)* | 10.000 Mbps | 18.000 Mbps | **15 Mbps DL / 8 Mbps UL (Max 400 Oturum)** |
