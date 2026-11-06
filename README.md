@@ -445,6 +445,7 @@ En kritik üç nokta:
 ```text
 firewallödev/
 ├── README.md                    # Proje raporu ve tüm mimari dokümantasyon
+├── company.json                 # BGT207 os-lab firewall manifestosu (şema doğrulamalı)
 │
 ├── 01-ankara-ofisi/
 │   ├── README.md                # Kişi sayıları (220), VLAN, bant genişliği (1.5G), FG-200F
