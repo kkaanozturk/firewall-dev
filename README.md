@@ -1,4 +1,4 @@
-﻿# Vize Projesi – Kurumsal Ağ Tasarımı: Bant Genişliği ve Güvenlik Duvarları
+# Vize Projesi – Kurumsal Ağ Tasarımı: Bant Genişliği ve Güvenlik Duvarları
 
 > Bu depo, AegisNova Global için bant genişliği hesabını, VLAN bölünmesini, şube bazlı en uygun güvenlik duvarlarını, kural setlerini ve izleme (monitoring) yapısını içerir. Şube bazlı tam kural setleri ve cihaz konfigürasyonları şube klasörlerindedir (`01-` … `04-`).
 
@@ -13,8 +13,6 @@ Kurgusal şirketimiz AegisNova Global; İstanbul genel merkezi, Ankara ve Londra
 | [Londra](03-londra-ofisi/README.md) | 45 | 0 | 0 | 50 | 10 | 5 | 25 | **135** | 1,67 Gbps | 2 + 2 Gbps | Palo Alto PA-1410 |
 | [Akademik Şube](04-akademik-sube/README.md) | 190 | 320 | 10.000 | 35 | 30 | 10 | 45 | **10.630** | 24,46 Gbps | 20 + 10 Gbps | FortiGate 1800F |
 | **Toplam** | **480** | **320** | **10.000** | **310** | **87** | **38** | **190** | **11.425** | **33,40 Gbps** | **29,5 + 18 Gbps** | |
-
-Teknik: ağ ve sistem yönetimi (IT/NOC). Güvenlik: SOC analistleri ve güvenlik mühendisleri. Yazılım ve AR-GE ekiplerinin dört şubedeki ayrıntısı: [05-yazilim-ekibi](05-yazilim-ekibi/README.md), [06-arge-ekibi](06-arge-ekibi/README.md).
 Varsayımlar: her şubenin kendi internet çıkışı vardır, şubeler şifreli VPN ile birbirine bağlıdır, merkezi sunucular (ERP, e-posta, SIEM) İstanbul'dadır.
 
 ## 2. Ağ Topolojisi ve VLAN / IP Planı
@@ -188,7 +186,24 @@ Kişi başı limitler:
 
 ## 4. Adım Adım Güvenlik Duvarı Kurulumu
 
-Kurulum dört şubede aynı sırayla uygulanır: fiziksel kurulum → sertleştirme → HA → LACP/VLAN/bölgeler → ISP/SD-WAN/QoS → VPN → kimlik ve SSL inceleme → kurallar, NAT ve log → test ve devreye alma. Tüm adımlar: [KURULUM.md](KURULUM.md). Şubeye özel adımlar ve kabul testleri her şubenin `kurulum-adimlari.md` dosyasındadır.
+Her şubeye bir yeni nesil güvenlik duvarı (NGFW) kurulur ve dört şubede de aynı sırayla uygulanır. Tüm şubelerde cihazlar **Active-Passive HA** çiftidir.
+
+1. **Envanter ve risk analizi:** Kullanıcı, cihaz, sunucu ve uygulamalar çıkarılır; neyin korunacağı belirlenir.
+2. **Güvenlik politikası:** "Varsayılan reddet" ve "en az yetki" ilkesi; hangi grup neye erişir yazılır.
+3. **Fiziksel kurulum:** Cihaz ISP ve çekirdek anahtar arasına alınır; çift güç (PSU/PDU), HA bağlantı kabloları ve out-of-band konsol bağlanır.
+4. **Sertleştirme:** Firmware güncellenir, varsayılan şifre değişir, yönetim arayüzü yalnızca yönetim VLAN'ına açılır, HTTP/Telnet kapatılır, MFA, NTP ve syslog (TLS) ayarlanır.
+5. **HA:** Active-Passive küme, preemption kapalı, bağlantı izleme açık (devralma < 1 sn).
+6. **Arayüz ve bölgeler:** LACP ile çekirdeğe bağlanır; her VLAN ayrı alt arayüz ve güvenlik bölgesi olur.
+7. **NAT:** İç ağlar için kaynak NAT; DMZ için hedef NAT (443).
+8. **Kurallar:** En özel kural en üstte, en genel en altta; liste "hepsini reddet ve logla" ile biter (Bölüm 6).
+9. **Şubeler arası VPN:** IKEv2, AES-256-GCM, SHA-384, DH grup 20; BGP ile dinamik yönlendirme.
+10. **Uzaktan erişim VPN:** Personel ve hocalar için MFA'lı VPN; öğrencilere VPN verilmez.
+11. **Güvenlik profilleri:** IPS, antivirüs, web filtre, uygulama kontrolü, DNS filtre. Öğrenci ağında KVKK nedeniyle SSL inceleme yalnızca kategori bazlıdır; finans ve sağlık siteleri şifre çözmeden muaftır.
+12. **QoS:** Bölüm 3'teki sınıflar ve kişi başı limitler şekillendirme kuralı olarak girilir.
+13. **Loglama ve izleme:** Tüm loglar merkezdeki SIEM'e gider (Bölüm 9). Türkiye şubelerinde 5651 kapsamında loglar zaman damgalanır.
+14. **Test ve devreye alma:** Nmap taraması, misafir ve öğrenci ağından iç ağa erişim denemesi, VPN kopma testi, HA devretme testi, ISP kesinti testi.
+15. **Yedek ve değişiklik yönetimi:** Haftalık konfigürasyon yedeği; her kural değişikliği talep numarası ve onayla yapılır.
+
 ## 5. Bölgeler Arası Politika Özeti
 
 | Kural | Uygulama |
@@ -468,29 +483,18 @@ En kritik üç nokta:
 2. Ankara savunma AR-GE bölgesinin farklı üreticili bir iç güvenlik duvarıyla internetten tamamen ayrılması.
 3. Güvenlik duvarının tek başına yetmemesi: ağ için NGFW, web uygulamaları için WAF ve izleme için 7/24 SOC birlikte kullanılmalıdır (derinlemesine savunma).
 
-## 11. Klasör Yapısı
+## 11. Proje Dizini
 
 ```text
 firewallödev/
-├── README.md                  → Projenin özeti ve ana rapor (bu dosya)
-├── KURULUM.md                 → Her şubede ortak kurulum adımları
-├── IZLEME.md                  → İzleme: sistematik kısım ve insan kısmı (ayrıntılı)
-├── RISKLER.md                 → Her şubede neyi, neden, nasıl koruyoruz
-├── SENARYOLAR.md              → Sistemin gerçek olaylarda nasıl çalıştığı
-├── SOZLUK.md                  → Terimlerin açıklamaları
-├── KAYNAKLAR.md               → Cihaz hızlarının ve mevzuatın kaynakları
+├── README.md                    # Proje raporu ve tüm mimari dokümantasyon
+├── firewallödev.txt             # Ödev isteri
 │
 ├── 01-ankara-ofisi/
-│   ├── README.md              → Kişi sayıları, VLAN ve bant genişliği
-│   ├── top5-firewall.md       → 5 aday güvenlik duvarı ve seçim
-│   ├── kurulum-adimlari.md    → Şubeye özel kurulum ve testler
-│   ├── firewall-kurallari.md  → Şubenin kural seti
-│   └── configs/               → Cihaz konfigürasyonları
-├── 02-istanbul-ofisi/         → (aynı yapı)
-├── 03-londra-ofisi/           → (aynı yapı)
-├── 04-akademik-sube/          → (aynı yapı)
-├── 05-yazilim-ekibi/          → README, top5-firewall, kurulum-adimlari
-└── 06-arge-ekibi/             → README, top5-firewall, kurulum-adimlari
+│   ├── README.md                # Kişi sayıları, VLAN, bant genişliği, en iyi 5 güvenlik duvarı
+│   ├── firewall-kurallari.md    # Şubenin kural seti
+│   └── configs/                 # Cihaz konfigürasyonları
+├── 02-istanbul-ofisi/           # (aynı yapı)
+├── 03-londra-ofisi/             # (aynı yapı)
+└── 04-akademik-sube/            # (aynı yapı)
 ```
-
-Ayrıntılı belgeler: [Kurulum](KURULUM.md) · [İzleme](IZLEME.md) · [Riskler](RISKLER.md) · [Senaryolar](SENARYOLAR.md) · [Sözlük](SOZLUK.md) · [Kaynaklar](KAYNAKLAR.md)
