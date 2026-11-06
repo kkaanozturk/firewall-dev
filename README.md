@@ -488,13 +488,12 @@ En kritik üç nokta:
 ```text
 firewallödev/
 ├── README.md                    # Proje raporu ve tüm mimari dokümantasyon
-├── firewallödev.txt             # Ödev isteri
 │
 ├── 01-ankara-ofisi/
 │   ├── README.md                # Kişi sayıları, VLAN, bant genişliği, en iyi 5 güvenlik duvarı
 │   ├── firewall-kurallari.md    # Şubenin kural seti
-│   └── configs/                 # Cihaz konfigürasyonları
-├── 02-istanbul-ofisi/           # (aynı yapı)
-├── 03-londra-ofisi/             # (aynı yapı)
-└── 04-akademik-sube/            # (aynı yapı)
+│   └── configs/                 # Cihaz konfigürasyonları (pa1420, fg200f ISFW, nftables/tc)
+├── 02-istanbul-ofisi/           # (aynı yapı: pa3430)
+├── 03-londra-ofisi/             # (aynı yapı: pa1410)
+└── 04-akademik-sube/            # (aynı yapı: fg1800f)
 ```
